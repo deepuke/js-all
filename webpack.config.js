@@ -1,9 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 const webpack = require('webpack');
 
 module.exports = {
+    mode: 'development',
     entry: {
         app: './src/index.js'
     },
@@ -15,8 +17,43 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.js$/,
+                loader: ['babel-loader'],
+                exclude: file => (
+                    /node_modules/.test(file) &&
+                    !/\.vue\.js/.test(file)
+                )
+            },
+            {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'vue-style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            localIdentName: '[local]_[hash:base64:8]'
+                        }
+                    }
+                ]
+            }, {
+                test: /\.vue$/,
+                loader: ['vue-loader']
+            },
+            {
+                test: /\.scss$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            indentedSyntax: true
+                        }
+                    }
+                ]
             }
         ]
     },
@@ -26,7 +63,8 @@ module.exports = {
             title: 'Output management'
         }),
         new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new VueLoaderPlugin()
     ],
     output: {
         filename: '[name].bundle.js',
