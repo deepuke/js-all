@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "private": true,
+  "sideEffects": false,
   "scripts": {
     "server": "node server.js",
     "start": "webpack-dev-server --open",
